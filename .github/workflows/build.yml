@@ -21,5 +21,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/lerbie/runpod-vllm-worker-long:latest
           platforms: linux/amd64
