@@ -31,7 +31,9 @@ def handler(event):
         },
         timeout=600,
     )
-    r.raise_for_status()
+    if r.status_code != 200:
+        print("vLLM ERROR:", r.text)
+        raise Exception(f"vLLM failed: {r.status_code}")
     data = r.json()
     return {"text": data["choices"][0]["message"]["content"]}
 
