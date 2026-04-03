@@ -31,7 +31,7 @@ while [ $ATTEMPT -lt $MAX_RETRIES ]; do
       echo "vLLM process died unexpectedly"
       break
     fi
-    if nc -z localhost 8000 2>/dev/null; then
+    if curl -sf http://localhost:8000/health > /dev/null 2>&1; then
       READY=1
       break
     fi
