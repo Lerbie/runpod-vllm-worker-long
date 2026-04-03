@@ -11,9 +11,8 @@ start_vllm() {
     --host 0.0.0.0 \
     --port 8000 \
     --max-model-len 8192 \
-    --max-num-seqs 48 \
-    --gpu-memory-utilization 0.9 \
-    --enforce-eager \
+    --max-num-seqs 32 \
+    --gpu-memory-utilization 0.8 \
     --disable-log-requests \
     &
   VLLM_PID=$!
