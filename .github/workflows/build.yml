@@ -21,7 +21,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            ghcr.io/lerbie/runpod-vllm-worker-long:latest
-            ghcr.io/lerbie/runpod-vllm-worker-long:sha-${{ github.sha }}
+          tags: ghcr.io/lerbie/runpod-vllm-worker-long:v${{ github.run_number }}
           platforms: linux/amd64
