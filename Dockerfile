@@ -14,7 +14,7 @@ RUN pip3 install --no-cache-dir \
 
 RUN pip3 install --no-cache-dir vllm==0.6.3
 
-RUN pip3 install --no-cache-dir runpod requests transformers==4.44.2
+RUN pip3 install --no-cache-dir runpod requests transformers==4.45.2
 
 COPY handler.py /app/handler.py
 COPY start.sh /app/start.sh
