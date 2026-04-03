@@ -57,3 +57,5 @@ if [ $READY -eq 0 ]; then
 fi
 
 python3 -u /app/handler.py
+
+#omg
