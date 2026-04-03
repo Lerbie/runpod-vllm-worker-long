@@ -11,6 +11,7 @@ start_vllm() {
     --host 0.0.0.0 \
     --port 8000 \
     --max-model-len ${MAX_MODEL_LEN:-8192} \
+    --generation-config vllm \
     --max-num-seqs ${VLLM_MAX_NUM_SEQS:-32} \
     --gpu-memory-utilization ${VLLM_GPU_MEMORY_UTILIZATION:-0.85} \
     --disable-log-requests \
