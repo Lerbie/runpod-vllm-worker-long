@@ -1,12 +1,21 @@
-FROM nvidia/cuda:12.6.0-runtime-ubuntu22.04
+FROM nvidia/cuda:12.1.0-devel-ubuntu22.04
 
+ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
-RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/apt/lists/*
-RUN pip install --no-cache-dir \
-    runpod \
-    requests \
-    vllm==0.6.3 \
-    transformers==4.44.2
+
+RUN apt-get update && apt-get install -y \
+    python3 python3-pip python3-dev \
+    curl netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install --no-cache-dir \
+    torch==2.4.0 \
+    --index-url https://download.pytorch.org/whl/cu121
+
+RUN pip3 install --no-cache-dir vllm==0.6.3
+
+RUN pip3 install --no-cache-dir runpod requests transformers==4.44.2
+
 COPY handler.py /app/handler.py
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
