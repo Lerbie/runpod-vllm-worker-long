@@ -1,20 +1,59 @@
 #!/usr/bin/env bash
 set -e
 
-# Start vLLM with proper token limits so max_new_tokens actually works
-python3 -m vllm.entrypoints.openai.api_server \
-  --model "${MODEL_NAME:-qwen/qwen2.5-7b-instruct}" \
-  --host 0.0.0.0 \
-  --port 8000 \
-  --max-model-len 8192 \
-  --max-num-seqs 48 \
-  --gpu-memory-utilization 0.9 \
-  --enforce-eager \
-  --disable-log-requests \
-  &
+MAX_RETRIES=3
+ATTEMPT=0
 
-# Give vLLM a few seconds to start
-sleep 3
+start_vllm() {
+  echo "Starting vLLM server (attempt $((ATTEMPT+1))/$MAX_RETRIES)..."
+  python3 -m vllm.entrypoints.openai.api_server \
+    --model "${MODEL_NAME:-qwen/qwen2.5-7b-instruct}" \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --max-model-len 8192 \
+    --max-num-seqs 48 \
+    --gpu-memory-utilization 0.9 \
+    --enforce-eager \
+    --disable-log-requests \
+    &
+  VLLM_PID=$!
+}
 
-# Start the RunPod handler
+while [ $ATTEMPT -lt $MAX_RETRIES ]; do
+  start_vllm
+
+  echo "Waiting for vLLM to be ready..."
+  timeout=90
+  READY=0
+
+  while [ $timeout -gt 0 ]; do
+    if ! kill -0 $VLLM_PID 2>/dev/null; then
+      echo "vLLM process died unexpectedly"
+      break
+    fi
+    if nc -z localhost 8000 2>/dev/null; then
+      READY=1
+      break
+    fi
+    sleep 1
+    timeout=$((timeout-1))
+  done
+
+  if [ $READY -eq 1 ]; then
+    echo "vLLM is ready on port 8000"
+    break
+  fi
+
+  echo "Attempt $((ATTEMPT+1)) failed. Cleaning up..."
+  kill $VLLM_PID 2>/dev/null || true
+  wait $VLLM_PID 2>/dev/null || true
+  sleep 5
+  ATTEMPT=$((ATTEMPT+1))
+done
+
+if [ $READY -eq 0 ]; then
+  echo "ERROR: vLLM failed to start after $MAX_RETRIES attempts"
+  exit 1
+fi
+
 python3 -u /app/handler.py
