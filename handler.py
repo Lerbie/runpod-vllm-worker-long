@@ -3,6 +3,16 @@ import runpod
 import requests
 
 MODEL = os.environ.get("MODEL_NAME", "qwen/qwen2.5-7b-instruct")
+MAX_CONTEXT = 8192
+SAFE_MARGIN = 512
+
+prompt_text = " ".join([m.get("content","") for m in messages])
+prompt_tokens_estimate = len(prompt_text) // 4
+
+max_tokens = min(
+    max_tokens,
+    MAX_CONTEXT - prompt_tokens_estimate - SAFE_MARGIN
+)
 
 def handler(event):
     inp = event.get("input", {})
