@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install vLLM (will pull the correct torch version automatically)
-RUN pip3 install --no-cache-dir vllm==0.6.3
+RUN pip3 install --no-cache-dir vllm==0.7.3
 
 # Install your additional Python packages, including pyairports to fix the guided-decoding crash
 RUN pip3 install --no-cache-dir runpod requests transformers==4.45.2 pyairports
