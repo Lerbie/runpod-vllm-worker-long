@@ -9,9 +9,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir \
-    torch==2.4.0 \
-    --index-url https://download.pytorch.org/whl/cu121
-
+    torch==2.5.1 \
+    --index-url https://download.pytorch.org/whl/cu124
 RUN pip3 install --no-cache-dir vllm==0.6.3
 
 RUN pip3 install --no-cache-dir runpod requests transformers==4.45.2 pyairports
